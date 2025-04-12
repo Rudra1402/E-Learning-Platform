@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from database import get_database
+from database import get_database, user_exists
 from models.users import Student, Instructor, OrgAdmin, SuperAdmin, UserRole
 from controllers.users import create_user
 
@@ -10,6 +10,9 @@ router = APIRouter()
 @router.post("/register/student")
 async def register_student(student: Student, db=Depends(get_database)):
     try:
+        if await user_exists(db, student.email):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+
         student.role = UserRole.STUDENT
         student.enrolled_courses = [ObjectId(course) for course in student.enrolled_courses]
         

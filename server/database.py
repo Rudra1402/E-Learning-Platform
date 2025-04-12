@@ -10,3 +10,7 @@ collection = database["users"]
 
 async def get_database():
     return database
+
+async def user_exists(db, email: str) -> bool:
+    user = await db.users.find_one({"email": email})
+    return user is not None
