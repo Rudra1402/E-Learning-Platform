@@ -30,11 +30,11 @@ class UserBase(BaseModel):
 
 class Student(UserBase):
     role: int = UserRole.STUDENT
-    enrolled_courses: List[PyObjectId] = [] 
+    enrolled_courses: List[PyObjectId]
 
 class Instructor(UserBase):
     role: int = UserRole.INSTRUCTOR
-    courses_created: List[PyObjectId] = [] 
+    courses_created: List[PyObjectId] 
 
 class OrgAdmin(UserBase):
     role: int = UserRole.ORG_ADMIN

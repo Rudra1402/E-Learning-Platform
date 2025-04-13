@@ -17,7 +17,7 @@ async def register_student(student: Student, db=Depends(get_database)):
         student.enrolled_courses = [ObjectId(course) for course in student.enrolled_courses]
         
         student_id = await create_user(db, student)
-        return {"message": "Student registered successfully", "id": str(student_id)}
+        return {"message": "Student registered successfully", "id": str(student_id), "student": student}
     
     except ValueError as e:
         raise HTTPException(
@@ -38,11 +38,14 @@ async def register_student(student: Student, db=Depends(get_database)):
 @router.post("/register/instructor")
 async def register_instructor(instructor: Instructor, db=Depends(get_database)):
     try:
+        if await user_exists(db, instructor.email):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+
         instructor.role = UserRole.INSTRUCTOR
         instructor.courses_created = [ObjectId(course) for course in instructor.courses_created]
         
         instructor_id = await create_user(db, instructor)
-        return {"message": "Instructor registered successfully", "id": str(instructor_id)}
+        return {"message": "Instructor registered successfully", "id": str(instructor_id), "instructor": instructor}
     
     except ValueError as e:
         raise HTTPException(
@@ -60,14 +63,17 @@ async def register_instructor(instructor: Instructor, db=Depends(get_database)):
             detail=f"An unexpected error occurred: {str(e)}"
         )
 
-@router.post("/register/org-admin")
+@router.post("/register/admin")
 async def register_org_admin(org_admin: OrgAdmin, db=Depends(get_database)):
     try:
+        if await user_exists(db, org_admin.email):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+
         org_admin.role = UserRole.ORG_ADMIN
         org_admin.organization_id = ObjectId(org_admin.organization_id)
         
         admin_id = await create_user(db, org_admin)
-        return {"message": "Organization Admin registered successfully", "id": str(admin_id)}
+        return {"message": "Organization Admin registered successfully", "id": str(admin_id), "admin": org_admin}
     
     except ValueError as e:
         raise HTTPException(
