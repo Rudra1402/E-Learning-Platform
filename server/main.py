@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from routes.users import router
+from routes.organizations import router as organization_router
+from routes.users import router as user_router
 from database import get_database
 
 app = FastAPI(
@@ -15,7 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix="/user", tags=["users"])
+app.include_router(organization_router, prefix="/api", tags=["Organizations"])
+app.include_router(user_router, prefix="/user", tags=["users"])
 
 @app.get("/")
 async def root():

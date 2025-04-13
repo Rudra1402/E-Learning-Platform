@@ -4,13 +4,12 @@ import uuid
 from bson import ObjectId
 
 class PyObjectId(str):
-    """Ensures the field is always stored as a valid MongoDB ObjectID string."""
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v, info=None):
         if not ObjectId.is_valid(v):
             raise ValueError("Invalid ObjectID format")
         return str(v)

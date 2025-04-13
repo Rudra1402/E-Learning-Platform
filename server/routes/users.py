@@ -73,7 +73,7 @@ async def register_org_admin(org_admin: OrgAdmin, db=Depends(get_database)):
         org_admin.organization_id = ObjectId(org_admin.organization_id)
         
         admin_id = await create_user(db, org_admin)
-        return {"message": "Organization Admin registered successfully", "id": str(admin_id), "admin": org_admin}
+        return {"message": "Organization Admin registered successfully", "id": str(admin_id)}
     
     except ValueError as e:
         raise HTTPException(
